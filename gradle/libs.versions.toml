@@ -1,0 +1,57 @@
+[versions]
+jdk = "21" # JDK version
+springBoot = "4.0.3" # Spring Boot version
+springDependencyManagement = "1.1.7" # Spring Dependency Management version
+kotlin = "2.2.21" # Kotlin version
+jooq = "3.20.10" # jOOQ version
+asciidoctor = "4.0.5" # Asciidoctor JVM version
+testcontainers = "2.0.1" # Testcontainers version
+rediscontainer = "2.2.2" # Redis Testcontainer version
+jjwt = "0.13.0" # JJWT version
+lettuce = "7.4.0.BETA1" # Lettuce version
+uuid = "5.2.0" # UUID Creator version
+caffeine = "3.2.3" # Caffeine version
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+asciidoctor-jvm = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor" }
+jooq-codegen = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
+
+[libraries]
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-starter-flyway = { module = "org.springframework.boot:spring-boot-starter-flyway" }
+spring-boot-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql" }
+jooq-postgres-extension = { module = "org.jooq:jooq-postgres-extensions", version.ref = "jooq" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc" }
+spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+cache-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+spring-boot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose" }
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+spring-boot-restdocs = { module = "org.springframework.boot:spring-boot-restdocs" }
+spring-boot-starter-data-redis-test = { module = "org.springframework.boot:spring-boot-starter-data-redis-test" }
+spring-boot-starter-flyway-test = { module = "org.springframework.boot:spring-boot-starter-flyway-test" }
+spring-boot-starter-jooq-test = { module = "org.springframework.boot:spring-boot-starter-jooq-test" }
+spring-boot-starter-security-test = { module = "org.springframework.boot:spring-boot-starter-security-test" }
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }
+spring-boot-starter-cache-test = { module = "org.springframework.boot:spring-boot-starter-cache-test" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
+jackson-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
+postgresql = { module = "org.postgresql:postgresql" }
+spring-restdocs-mockmvc = { module = "org.springframework.restdocs:spring-restdocs-mockmvc" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
+testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref = "rediscontainer" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+uuid-creator = { module = "com.fasterxml.uuid:java-uuid-generator", version.ref = "uuid" }
