@@ -402,6 +402,14 @@ fileRepo.insert(
         extension = extension
     )
 )
+
+fileRpoe.updateById(
+    id,
+    FileUpdateQuery(
+        name = cmd.name,
+        extension = extension
+    )
+)
 ```
 
 # 7. Package Oraganization
