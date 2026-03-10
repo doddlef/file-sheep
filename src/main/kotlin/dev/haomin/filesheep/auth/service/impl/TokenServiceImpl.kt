@@ -98,11 +98,11 @@ class TokenServiceImpl(
                 email = email,
                 status = AccountStatus.fromString(statusText),
             )
-        } catch (e: ExpiredJwtException) {
+        } catch (_: ExpiredJwtException) {
             throw ExpiredAuthenticationException("access token has expired")
-        } catch (e: JwtException) {
+        } catch (_: JwtException) {
             throw InvalidAuthenticationException("invalid access token")
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             throw InvalidAuthenticationException("invalid access token")
         }
 

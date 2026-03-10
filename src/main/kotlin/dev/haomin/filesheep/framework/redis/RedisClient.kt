@@ -11,7 +11,7 @@ class RedisClient(
     private val objectMapper: ObjectMapper,
 ) {
 
-    private fun ensureNotPipeline(): Unit {
+    private fun ensureNotPipeline() {
         val isPipelined = template.execute { connection -> connection.isPipelined } ?: false
         if (isPipelined) {
             throw PipelineException()
@@ -108,7 +108,7 @@ class RedisClient(
      * @param unit The time unit for the expiration time (default is seconds)
      * @throws PipelineException if run in pipeline mode
      */
-    fun set(key: String, value: String, expire: Long? = null, unit: TimeUnit = TimeUnit.SECONDS): Unit {
+    fun set(key: String, value: String, expire: Long? = null, unit: TimeUnit = TimeUnit.SECONDS) {
         ensureNotPipeline()
         if (expire != null && expire > 0)
             template.opsForValue().set(key, value, expire, unit)
@@ -155,7 +155,7 @@ class RedisClient(
      * @param unit The time unit for the expiration time (default is seconds)
      * @throws PipelineException if run in pipeline mode
      */
-    fun setObj(key: String, value: Any, expire: Long? = null, unit: TimeUnit = TimeUnit.SECONDS): Unit =
+    fun setObj(key: String, value: Any, expire: Long? = null, unit: TimeUnit = TimeUnit.SECONDS) =
         this.set(key, objectMapper.writeValueAsString(value), expire, unit)
 
     /**

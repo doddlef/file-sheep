@@ -203,7 +203,7 @@ class RegisterServiceImpl(
     private fun normalizeEmail(email: String): String =
         email.trim().lowercase()
 
-    private fun validateCodeFormat(code: String): Unit {
+    private fun validateCodeFormat(code: String) {
         if (code.length != registerProperties.codeLength || !code.all { it.isDigit() }) {
             throw InvalidParamException("verification code format is invalid")
         }
@@ -213,12 +213,12 @@ class RegisterServiceImpl(
         redisClient.getObj<RegisterAttempt>(attemptKey(attemptId))
             ?: throw InvalidParamException("invalid or expired registration attempt")
 
-    private fun validateAttemptIdFormat(attemptId: String): Unit {
+    private fun validateAttemptIdFormat(attemptId: String) {
         runCatching { UUID.fromString(attemptId) }
             .getOrElse { throw InvalidParamException("attemptId is not a valid UUID") }
     }
 
-    private fun saveAttemptWithRemainingTtl(key: String, attempt: RegisterAttempt): Unit {
+    private fun saveAttemptWithRemainingTtl(key: String, attempt: RegisterAttempt) {
         val ttl = remainingTtlSeconds(key)
         redisClient.setObj(key, attempt, ttl, TimeUnit.SECONDS)
     }
@@ -271,7 +271,7 @@ class RegisterServiceImpl(
         )
     }
 
-    private fun sendEmailCode(email: String, attemptId: String, code: String): Unit {
+    private fun sendEmailCode(email: String, attemptId: String, code: String) {
         logger.info(
             "Register code issued. attemptId={}, email={}",
             attemptId,

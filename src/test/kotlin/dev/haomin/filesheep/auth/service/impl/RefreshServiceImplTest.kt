@@ -35,7 +35,7 @@ class RefreshServiceImplTest {
     )
 
     @Test
-    fun createSessionStoresHashedTokenAndReturnsRawToken(): Unit {
+    fun createSessionStoresHashedTokenAndReturnsRawToken() {
         val accountId = UUID.randomUUID()
 
         val result = service.createSession(accountId)
@@ -51,7 +51,7 @@ class RefreshServiceImplTest {
     }
 
     @Test
-    fun rotateSessionUpdatesTokenAndPrevTokenWhenCurrentTokenMatches(): Unit {
+    fun rotateSessionUpdatesTokenAndPrevTokenWhenCurrentTokenMatches() {
         val accountId = UUID.randomUUID()
         val inserted = service.createSession(accountId)
         val oldParts = inserted.refreshToken.split('.', limit = 2)
@@ -89,7 +89,7 @@ class RefreshServiceImplTest {
     }
 
     @Test
-    fun rotateSessionRevokesAndThrowsWhenTokenReuseDetected(): Unit {
+    fun rotateSessionRevokesAndThrowsWhenTokenReuseDetected() {
         val accountId = UUID.randomUUID()
         val sessionId = UUID.randomUUID()
         val session = RefreshSession(
@@ -120,7 +120,7 @@ class RefreshServiceImplTest {
     }
 
     @Test
-    fun rotateSessionRevokesAndThrowsWhenSessionExpired(): Unit {
+    fun rotateSessionRevokesAndThrowsWhenSessionExpired() {
         val accountId = UUID.randomUUID()
         val sessionId = UUID.randomUUID()
         val session = RefreshSession(
@@ -148,7 +148,7 @@ class RefreshServiceImplTest {
     }
 
     @Test
-    fun revokeSessionReturnsFalseForInvalidTokenFormat(): Unit {
+    fun revokeSessionReturnsFalseForInvalidTokenFormat() {
         val revoked = service.revokeSession("invalid-format", "logout")
         assertFalse(revoked)
     }

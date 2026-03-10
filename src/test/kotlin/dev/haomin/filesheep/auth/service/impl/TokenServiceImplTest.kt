@@ -50,7 +50,7 @@ class TokenServiceImplTest {
     )
 
     @Test
-    fun loginReturnsAccessAndRefreshTokenAndCookie(): Unit {
+    fun loginReturnsAccessAndRefreshTokenAndCookie() {
         val account = sampleAccount()
         val refreshToken = "${UUID.randomUUID()}.refresh-secret"
         `when`(accountRepo.selectById(account.id)).thenReturn(account)
@@ -75,7 +75,7 @@ class TokenServiceImplTest {
     }
 
     @Test
-    fun refreshReturnsRotatedRefreshTokenAndNewAccessToken(): Unit {
+    fun refreshReturnsRotatedRefreshTokenAndNewAccessToken() {
         val account = sampleAccount()
         val incomingRefresh = "${UUID.randomUUID()}.old-secret"
         val rotatedRefresh = "${UUID.randomUUID()}.new-secret"
@@ -97,7 +97,7 @@ class TokenServiceImplTest {
     }
 
     @Test
-    fun parseAccessTokenReturnsTokenAuth(): Unit {
+    fun parseAccessTokenReturnsTokenAuth() {
         val account = sampleAccount()
         val loginRefresh = "${UUID.randomUUID()}.refresh"
         `when`(accountRepo.selectById(account.id)).thenReturn(account)
@@ -114,7 +114,7 @@ class TokenServiceImplTest {
     }
 
     @Test
-    fun parseAccessTokenThrowsExpiredAuthenticationForExpiredJwt(): Unit {
+    fun parseAccessTokenThrowsExpiredAuthenticationForExpiredJwt() {
         val expired = buildExpiredToken()
 
         assertThrows<ExpiredAuthenticationException> {
@@ -123,7 +123,7 @@ class TokenServiceImplTest {
     }
 
     @Test
-    fun logoutRevokesSessionAndReturnsClearingCookie(): Unit {
+    fun logoutRevokesSessionAndReturnsClearingCookie() {
         val refreshToken = "${UUID.randomUUID()}.refresh"
         `when`(refreshService.revokeSession(refreshToken, "logout")).thenReturn(true)
 

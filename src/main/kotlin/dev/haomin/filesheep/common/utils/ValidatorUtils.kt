@@ -13,7 +13,7 @@ object ValidatorUtils {
     /**
      * Validates and normalizes email format.
      */
-    fun validateEmail(email: String): Unit {
+    fun validateEmail(email: String) {
         val value = email.trim()
         if (value.isBlank()) {
             throw InvalidParamException("email cannot be blank")
@@ -29,7 +29,7 @@ object ValidatorUtils {
     /**
      * Validates nickname.
      */
-    fun validateNickname(nickname: String): Unit {
+    fun validateNickname(nickname: String) {
         val value = nickname.trim()
         if (value.isBlank()) {
             throw InvalidParamException("nickname cannot be blank")
@@ -45,7 +45,7 @@ object ValidatorUtils {
     /**
      * Validates password.
      */
-    fun validatePassword(password: String): Unit {
+    fun validatePassword(password: String) {
         if (password.isBlank()) {
             throw InvalidParamException("password cannot be blank")
         }

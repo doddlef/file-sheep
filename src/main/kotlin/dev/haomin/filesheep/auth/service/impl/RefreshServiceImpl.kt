@@ -133,7 +133,7 @@ class RefreshServiceImpl(
         )
     }
 
-    private fun revokeSessionById(id: UUID, reason: String, now: OffsetDateTime): Unit {
+    private fun revokeSessionById(id: UUID, reason: String, now: OffsetDateTime) {
         refreshSessionRepo.updateById(
             id = id,
             query = RefreshSessionUpdateQuery(

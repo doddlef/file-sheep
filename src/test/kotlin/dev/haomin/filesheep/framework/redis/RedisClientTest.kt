@@ -27,7 +27,7 @@ class RedisClientTest {
     private lateinit var stringRedisTemplate: StringRedisTemplate
 
     @Test
-    fun getExpireReturnsNullWhenKeyNotExists(): Unit {
+    fun getExpireReturnsNullWhenKeyNotExists() {
         val key = "test:redis-client:expire-missing:${UUID.randomUUID()}"
 
         val ttl = redisClient.getExpire(key)
@@ -36,7 +36,7 @@ class RedisClientTest {
     }
 
     @Test
-    fun getExpireReturnsNoExpireWhenKeyHasNoTtl(): Unit {
+    fun getExpireReturnsNoExpireWhenKeyHasNoTtl() {
         val key = "test:redis-client:no-expire:${UUID.randomUUID()}"
         redisClient.set(key, "value")
 
@@ -47,7 +47,7 @@ class RedisClientTest {
     }
 
     @Test
-    fun setObjAndGetObjRoundTrip(): Unit {
+    fun setObjAndGetObjRoundTrip() {
         val key = "test:redis-client:obj:${UUID.randomUUID()}"
         val expected = CachedUser(id = UUID.randomUUID().toString(), name = "alice", age = 24)
 
@@ -58,7 +58,7 @@ class RedisClientTest {
     }
 
     @Test
-    fun throwsPipelineExceptionWhenCalledInPipeline(): Unit {
+    fun throwsPipelineExceptionWhenCalledInPipeline() {
         val key = "test:redis-client:pipeline:${UUID.randomUUID()}"
 
         assertFailsWith<PipelineException> {
@@ -74,7 +74,7 @@ class RedisClientTest {
     }
 
     @Test
-    fun hasKeyUsesCorrectParameter(): Unit {
+    fun hasKeyUsesCorrectParameter() {
         val key = "test:redis-client:has-key:${UUID.randomUUID()}"
         redisClient.set(key, "ok")
 

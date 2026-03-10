@@ -29,12 +29,12 @@ class JooqAccountRepoTest {
     private lateinit var dsl: DSLContext
 
     @BeforeEach
-    fun setUp(): Unit {
+    fun setUp() {
         dsl.execute("truncate table refresh_sessions, accounts cascade")
     }
 
     @Test
-    fun insertAndSelectById(): Unit {
+    fun insertAndSelectById() {
         val id = UUID.randomUUID()
         val createdAt = OffsetDateTime.now().minusDays(1)
         val updatedAt = OffsetDateTime.now().minusDays(1)
@@ -65,13 +65,13 @@ class JooqAccountRepoTest {
     }
 
     @Test
-    fun selectByEmailReturnsNullWhenNotFound(): Unit {
+    fun selectByEmailReturnsNullWhenNotFound() {
         val account = accountRepo.selectByEmail("missing@example.com")
         assertNull(account)
     }
 
     @Test
-    fun updateByIdUpdatesOnlyProvidedFields(): Unit {
+    fun updateByIdUpdatesOnlyProvidedFields() {
         val id = UUID.randomUUID()
         accountRepo.insert(
             AccountInsertQuery(
@@ -109,7 +109,7 @@ class JooqAccountRepoTest {
     }
 
     @Test
-    fun updateByIdWithNoMutableFieldsStillUpdatesTimestamp(): Unit {
+    fun updateByIdWithNoMutableFieldsStillUpdatesTimestamp() {
         val id = UUID.randomUUID()
         accountRepo.insert(
             AccountInsertQuery(
