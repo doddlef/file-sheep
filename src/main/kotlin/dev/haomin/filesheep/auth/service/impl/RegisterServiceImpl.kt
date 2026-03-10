@@ -2,7 +2,6 @@ package dev.haomin.filesheep.auth.service.impl
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import java.security.SecureRandom
 import java.time.OffsetDateTime
 import java.util.Base64
 import java.util.UUID
@@ -17,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 import dev.haomin.filesheep.auth.prop.RegisterProperties
+import dev.haomin.filesheep.auth.service.RegisterCodeGenerator
 import dev.haomin.filesheep.auth.service.RegisterService
 import dev.haomin.filesheep.auth.service.vo.*
 import dev.haomin.filesheep.common.exception.ConflictException
@@ -40,9 +40,9 @@ class RegisterServiceImpl(
     private val redisClient: RedisClient,
     private val passwordEncoder: PasswordEncoder,
     private val registerProperties: RegisterProperties,
+    private val registerCodeGenerator: RegisterCodeGenerator,
 ) : RegisterService {
 
-    private val random: SecureRandom = SecureRandom()
     private val hashSecretBytes: ByteArray = decodeSecret(registerProperties.codeHashSecret)
 
     override fun sendVerificationEmail(cmd: SendVerificationCmd): SendVerificationResult {
@@ -66,7 +66,7 @@ class RegisterServiceImpl(
         }
 
         val attemptId = UUIDGenerator.next().toString()
-        val code = generateNumericCode(registerProperties.codeLength)
+        val code = registerCodeGenerator.generate(registerProperties.codeLength)
         val now = OffsetDateTime.now()
         val attempt = RegisterAttempt(
             attemptId = attemptId,
@@ -182,7 +182,7 @@ class RegisterServiceImpl(
             throw InvalidParamException("verification resend is cooling down")
         }
 
-        val code = generateNumericCode(registerProperties.codeLength)
+        val code = registerCodeGenerator.generate(registerProperties.codeLength)
         val attemptKey = attemptKey(cmd.attemptId)
         val updatedAttempt = attempt.copy(
             codeHash = hashCode(code),
@@ -236,18 +236,6 @@ class RegisterServiceImpl(
     private fun durationToSeconds(duration: Duration): Long {
         val seconds = duration.seconds
         return if (seconds <= 0) 1L else seconds
-    }
-
-    private fun generateNumericCode(length: Int): String {
-        if (length <= 0) {
-            throw InvalidParamException("verification code length must be positive")
-        }
-
-        return buildString(length) {
-            repeat(length) {
-                append(random.nextInt(10))
-            }
-        }
     }
 
     private fun hashCode(code: String): String {
