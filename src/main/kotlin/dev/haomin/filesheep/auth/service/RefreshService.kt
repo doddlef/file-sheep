@@ -4,6 +4,12 @@ import dev.haomin.filesheep.auth.service.vo.RefreshSessionProfile
 import dev.haomin.filesheep.domain.auth.RefreshSession
 import java.util.UUID
 
+/**
+ * Service interface responsible for managing refresh token sessions.
+ *
+ * Provides operations to create, load, revoke, and rotate refresh sessions
+ * to support secure and seamless authentication flows.
+ */
 interface RefreshService {
 
     /**
