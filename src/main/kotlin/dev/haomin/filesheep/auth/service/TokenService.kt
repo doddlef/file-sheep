@@ -1,17 +1,18 @@
 package dev.haomin.filesheep.auth.service
 
-import dev.haomin.filesheep.auth.exception.ExpiredAuthenticationException
-import dev.haomin.filesheep.auth.exception.InvalidAuthenticationException
+import java.util.UUID
+
+import org.springframework.http.ResponseCookie
+
+import dev.haomin.filesheep.auth.exception.AuthException
 import dev.haomin.filesheep.auth.service.vo.LoginResult
 import dev.haomin.filesheep.auth.service.vo.RefreshResult
-import java.util.UUID
+import dev.haomin.filesheep.domain.auth.TokenAuth
 
 interface TokenService {
 
     /**
      * Generate a new token pair for the user with the given ID.
-     *
-     * This will create a new refresh session for the user, generate token pairs, and set the refresh cookie.
      *
      * @param id The UUID of the user.
      * @return A [LoginResult] containing the token pair, user info, and refresh cookie.
@@ -20,21 +21,26 @@ interface TokenService {
 
     /**
      * Refresh the access token using the provided refresh token.
-     * This will pase the token and validate the refresh session.
-     *
-     * If the session is expired due to idle timeout or maximum lifetime exceeded,
-     * an [ExpiredAuthenticationException] will be thrown.
-     *
-     * If the jti does not match the current token but matches the previous one, and within the grace period,
-     * will return false.
-     *
-     * If the jti does not match current or previous token, an [InvalidAuthenticationException] will be thrown,
-     * and the session should be revoked, due to reuse.
      *
      * @param refreshToken The refresh token.
      * @return A [RefreshResult] containing the new access token and possibly a new refresh token.
+     * @throws [AuthException] if the refresh token is invalid or expired.
      */
     fun refresh(refreshToken: String): RefreshResult
 
+    /**
+     * Parse the access token and extract the authentication principal.
+     *
+     * @param accessToken The access token.
+     * @return An [TokenAuth] representing the authenticated user.
+     * @throws [AuthException] if the access token is invalid or expired.
+     */
+    fun parseAccessToken(accessToken: String): TokenAuth
 
+    /**
+     * Invalidate the provided refresh token, effectively logging the user out.
+     *
+     * @param refreshToken The refresh token to invalidate.
+     */
+    fun logout(refreshToken: String): ResponseCookie
 }

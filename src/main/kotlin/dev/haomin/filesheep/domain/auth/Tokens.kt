@@ -2,12 +2,12 @@ package dev.haomin.filesheep.domain.auth
 
 import java.time.OffsetDateTime
 
-data class JwtToken(
+data class Token(
     val token: String,
     val expiry: OffsetDateTime,
 )
 
 data class TokenPair(
-    val access: JwtToken,
-    val refresh: JwtToken,
+    val access: Token,
+    val refresh: Token,
 )
