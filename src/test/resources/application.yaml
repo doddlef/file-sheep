@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  docker:
+    compose:
+      enabled: false
+  flyway:
+    enabled: true
+
+filesheep:
+  auth:
+    access:
+      secret: "test-access-secret-test-access-secret-test-access-secret-test-access-secret"
+    refresh:
+      secret: "test-refresh-secret-test-refresh-secret-test-refresh-secret-test-refresh-secret"
