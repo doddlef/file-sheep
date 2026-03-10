@@ -10,27 +10,19 @@ import javax.crypto.SecretKey
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service
 
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.JwtException
-import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 
-import dev.haomin.filesheep.auth.exception.AuthAccountNotFoundException
-import dev.haomin.filesheep.auth.exception.ExpiredAuthenticationException
-import dev.haomin.filesheep.auth.exception.InvalidAuthenticationException
-import dev.haomin.filesheep.auth.prop.AccessTokenProperties
-import dev.haomin.filesheep.auth.prop.RefreshTokenProperties
-import dev.haomin.filesheep.auth.service.RefreshService
-import dev.haomin.filesheep.auth.service.TokenService
-import dev.haomin.filesheep.auth.service.vo.LoginResult
-import dev.haomin.filesheep.auth.service.vo.RefreshResult
+import dev.haomin.filesheep.auth.exception.*
+import dev.haomin.filesheep.auth.prop.*
+import dev.haomin.filesheep.auth.REFRESH_TOKEN_COOKIE
+import dev.haomin.filesheep.auth.service.*
+import dev.haomin.filesheep.auth.service.vo.*
 import dev.haomin.filesheep.domain.account.Account
 import dev.haomin.filesheep.domain.account.AccountStatus
 import dev.haomin.filesheep.domain.account.repo.AccountRepo
-import dev.haomin.filesheep.domain.auth.Token
-import dev.haomin.filesheep.domain.auth.TokenAuth
-import dev.haomin.filesheep.domain.auth.TokenPair
+import dev.haomin.filesheep.domain.auth.*
 
 /**
  * Default token service implementation.
@@ -155,7 +147,7 @@ class TokenServiceImpl(
     private companion object {
         const val ACCESS_CLAIM_EMAIL: String = "email"
         const val ACCESS_CLAIM_STATUS: String = "status"
-        const val REFRESH_COOKIE_NAME: String = "refresh_token"
+        const val REFRESH_COOKIE_NAME: String = REFRESH_TOKEN_COOKIE
         const val REFRESH_COOKIE_PATH: String = "/auth"
         const val REFRESH_COOKIE_SAME_SITE: String = "Lax"
     }
