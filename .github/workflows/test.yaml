@@ -46,5 +46,33 @@ jobs:
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Migrate, generate jOOQ, and test
-        run: ./gradlew --no-daemon flywayMigrate jooqCodegen test
+      - name: Install PostgreSQL client
+        run: |
+          if ! command -v psql >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U "$POSTGRES_USER" -d "${POSTGRES_URL##*/}"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "PostgreSQL did not become ready in time"
+          exit 1
+
+      - name: Apply DB migrations for jOOQ codegen
+        env:
+          PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        run: |
+          psql "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/${POSTGRES_URL##*/}" -v ON_ERROR_STOP=1 -f src/main/resources/db/migration/V1__init.sql
+          psql "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/${POSTGRES_URL##*/}" -v ON_ERROR_STOP=1 -f src/main/resources/db/migration/V2__auth.sql
+
+      - name: Generate jOOQ sources
+        run: ./gradlew --no-daemon jooqCodegen
+
+      - name: Run tests
+        run: ./gradlew --no-daemon test
