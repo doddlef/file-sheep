@@ -5,6 +5,7 @@ plugins {
 	alias(libs.plugins.kotlin.spring)
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency.management)
+	alias(libs.plugins.flyway)
 	alias(libs.plugins.asciidoctor.jvm)
 	alias(libs.plugins.jooq.codegen)
 }
@@ -92,6 +93,14 @@ tasks.asciidoctor {
 
 fun envOrNull(name: String): String? =
 	providers.environmentVariable(name).orNull
+
+flyway {
+	url = envOrNull("POSTGRES_URL")
+	user = envOrNull("POSTGRES_USER")
+	password = envOrNull("POSTGRES_PASSWORD")
+	locations = arrayOf("classpath:db/migration")
+	cleanDisabled = true
+}
 
 jooq {
 	version = libs.versions.jooq.get().toString()

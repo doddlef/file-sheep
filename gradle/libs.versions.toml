@@ -2,6 +2,7 @@
 jdk = "21" # JDK version
 springBoot = "4.0.3" # Spring Boot version
 springDependencyManagement = "1.1.7" # Spring Dependency Management version
+flyway = "11.15.0" # Flyway version
 kotlin = "2.2.21" # Kotlin version
 jooq = "3.20.10" # jOOQ version
 asciidoctor = "4.0.5" # Asciidoctor JVM version
@@ -17,6 +18,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 asciidoctor-jvm = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor" }
 jooq-codegen = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
 

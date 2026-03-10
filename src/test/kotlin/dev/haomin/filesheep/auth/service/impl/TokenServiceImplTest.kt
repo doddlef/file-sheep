@@ -1,5 +1,6 @@
 package dev.haomin.filesheep.auth.service.impl
 
+import dev.haomin.filesheep.auth.REFRESH_TOKEN_COOKIE
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.util.Date
@@ -67,7 +68,7 @@ class TokenServiceImplTest {
         assertEquals(account.id, result.account.id)
         assertNotNull(result.tokenPair.access.token)
         assertEquals(refreshToken, result.tokenPair.refresh.token)
-        assertEquals("refresh_token", result.refreshCookie.name)
+        assertEquals(REFRESH_TOKEN_COOKIE, result.refreshCookie.name)
         assertEquals("/auth", result.refreshCookie.path)
         assertTrue(result.refreshCookie.isHttpOnly)
         assertTrue(result.refreshCookie.isSecure)
@@ -92,7 +93,7 @@ class TokenServiceImplTest {
 
         assertEquals(rotatedRefresh, result.tokenPair.refresh.token)
         assertNotNull(result.tokenPair.access.token)
-        assertEquals("refresh_token", result.refreshCookie.name)
+        assertEquals(REFRESH_TOKEN_COOKIE, result.refreshCookie.name)
         verify(refreshService, times(1)).rotateSession(incomingRefresh)
     }
 
@@ -130,7 +131,7 @@ class TokenServiceImplTest {
         val cookie = service.logout(refreshToken)
 
         verify(refreshService, times(1)).revokeSession(refreshToken, "logout")
-        assertEquals("refresh_token", cookie.name)
+        assertEquals(REFRESH_TOKEN_COOKIE, cookie.name)
         assertEquals("", cookie.value)
         assertTrue(cookie.maxAge.isZero)
     }
