@@ -1,4 +1,15 @@
-import org.jooq.meta.jaxb.MatcherTransformType
+import org.jooq.meta.jaxb.*
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		// Flyway Gradle tasks resolve database support from the buildscript classpath.
+		classpath("org.flywaydb:flyway-database-postgresql:11.15.0")
+		classpath("org.postgresql:postgresql:42.7.10")
+	}
+}
 
 plugins {
 	alias(libs.plugins.kotlin.jvm)

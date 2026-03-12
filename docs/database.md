@@ -63,3 +63,6 @@ represents a refresh token session for authentication.
 - Used to support refresh token rotation
 - allows logout and session revocation, including detection for token reuse
 - `revoke_reason` can only be set when the token is revoked, `revoked_at` is set
+
+## 2. Drive Domain
+
