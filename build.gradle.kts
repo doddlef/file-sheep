@@ -1,4 +1,15 @@
-import org.jooq.meta.jaxb.MatcherTransformType
+import org.jooq.meta.jaxb.*
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		// Flyway Gradle tasks resolve database support from the buildscript classpath.
+		classpath("org.flywaydb:flyway-database-postgresql:11.15.0")
+		classpath("org.postgresql:postgresql:42.7.10")
+	}
+}
 
 plugins {
 	alias(libs.plugins.kotlin.jvm)
@@ -98,7 +109,7 @@ flyway {
 	url = envOrNull("POSTGRES_URL")
 	user = envOrNull("POSTGRES_USER")
 	password = envOrNull("POSTGRES_PASSWORD")
-	locations = arrayOf("classpath:db/migration")
+	locations = arrayOf("filesystem:src/main/resources/db/migration")
 	cleanDisabled = true
 }
 

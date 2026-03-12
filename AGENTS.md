@@ -1,170 +1,57 @@
-# AGENTS.md - File Sheep Development Guide
+# Repository Guidelines
 
-Guidelines for agents working on the File Sheep codebase.
+## Project Structure & Module Organization
+- Source code lives in `src/main/kotlin/dev/haomin/filesheep`.
+- Tests mirror production packages under `src/test/kotlin/dev/haomin/filesheep`.
+- DB migrations are in `src/main/resources/db/migration` (Flyway).
+- Local infrastructure is defined in `compose.yaml` (PostgreSQL + Redis).
+- Design and architecture references are in `docs/` (especially `docs/DOMAIN.md` and `docs/contract.md`).
+- jOOQ generated sources are in `build/generated-src/jooq/main/dev/haomin/filesheep/jooq` (`dev.haomin.filesheep.jooq` package).
+- REST Docs snippets are generated in `build/generated-snippets`.
+- Sensitive data, including DB credentials, is in `.env`.
 
----
+Organize code by domain first (`auth`, `domain`, `infra`, `common`, `config`), then by layer.
 
-## 1. Project Overview
+## Build, Test, and Development Commands
+- `./gradlew bootRun`: run the Spring Boot app locally.
+- `./gradlew test`: run all JUnit 5 tests.
+- `./gradlew test --tests dev.haomin.filesheep.infra.account.JooqAccountRepoTest`: run a single test class.
+- `./gradlew compileKotlin`: compile Kotlin sources.
+- `./gradlew flywayMigrate`: apply DB migrations (requires `POSTGRES_*` env vars).
+- `./gradlew jooqCodegen`: regenerate jOOQ classes after schema changes.
+  - Export environment variables first: `set -a && source .env && set +a`.
+- `docker compose up -d`: start local PostgreSQL/Redis.
+- `docker compose down`: stop local services.
 
-- **Type**: Kotlin Spring Boot application (REST API)
-- **Build System**: Gradle (Kotlin DSL)
-- **JDK**: 21 | **Framework**: Spring Boot 4.0.3
-- **Package**: `dev.haomin.filesheep`
+## Coding Style & Naming Conventions
+- Language: Kotlin (JDK toolchain configured in Gradle).
+- Use tabs/formatting consistent with existing `.kts` and Kotlin files; keep functions small and explicit.
+- Follow contract naming:
+  - Service interface: `XxxService`; implementation: `XxxServiceImpl`
+  - Repo interface: `XxxRepo`; jOOQ implementation: `JooqXxxRepo`
+  - Service inputs: `XxxCmd`/`XxxQuery`; outputs: `XxxResult`/`XxxDetail`
+- Keep controllers thin: map DTOs to service command objects; no business logic in controllers.
+- Prefer composition over inheritance; keep business rules in service layer, not infra/controller.
 
----
+## Testing Guidelines
+- Frameworks: JUnit 5, Spring Boot Test, MockMvc, Testcontainers.
+- Name tests `*Test` or `*MockMvcTest`; mirror package structure.
+- Prioritize service logic, repository integration, and auth/permission flows.
+- Use deterministic assertions; avoid network-dependent tests outside Testcontainers.
+- For API tests, use `MockMvc` and assert both status and response contract.
+- For data-layer tests, validate behavior against migrated schema.
 
-## 2. Build, Lint, and Test Commands
+## Commit & Pull Request Guidelines
+- Use Conventional Commit style seen in history: `feat: ...`, `refactor: ...`, `init: ...`.
+- Keep commits focused and atomic; include migration/codegen updates in the same change when relevant.
+- PRs should include:
+  - clear summary and scope
+  - linked issue (if any)
+  - test evidence (`./gradlew test` output summary)
+  - API examples for controller changes (request/response snippets)
+  - migration/codegen note when DB schema changes (`V*__*.sql` + regenerated jOOQ)
 
-### Gradle
-```bash
-./gradlew          # Unix/macOS
-./gradlew.bat      # Windows
-./gradlew build              # Build (compile + test)
-./gradlew build -x test      # Build without tests
-./gradlew bootJar            # Create JAR
-./gradlew bootRun            # Run application
-./gradlew clean build        # Clean and rebuild
-./gradlew jooqCodegen        # Generate jOOQ from schema
-```
-
-### Testing
-```bash
-./gradlew test               # Run all tests
-./gradlew test --info        # Verbose output
-
-# Run single test class
-./gradlew test --tests "dev.haomin.filesheep.FilesheepApplicationTests"
-
-# Run single test method
-./gradlew test --tests "dev.haomin.filesheep.FilesheepApplicationTests.contextLoads"
-```
-
----
-
-## 3. Code Style
-
-### Package Structure
-```
-dev.haomin.filesheep.common.*       - shared utilities
-dev.haomin.filesheep.feature.*     - feature modules
-dev.haomin.filesheep.domain.*       - domain models
-dev.haomin.filesheep.infrastructure.* - infrastructure code
-```
-
-### Naming
-
-| Element | Convention | Example |
-|---------|------------|---------|
-| Classes | PascalCase | `FilesheepApplication` |
-| Functions | camelCase | `createResponse()` |
-| Properties | camelCase | `userId`, `isActive` |
-| Constants | UPPER_SNAKE_CASE | `MAX_FILE_SIZE` |
-| Enums | PascalCase | `ResponseCode` |
-| Test classes | `*Test` or `*IT` | `FilesheepApplicationTests` |
-
-### Formatting
-- **Indentation**: 4 spaces | **Line length**: ~120 chars
-- **Blank lines**: single between declarations, double between functions
-
-### Imports (in order)
-1. Kotlin stdlib (`kotlin.*`)
-2. Java stdlib (`java.*`, `javax.*`)
-3. Spring (`org.springframework.*`)
-4. Third-party
-5. Project (`dev.haomin.filesheep.*`)
-
-Use explicit imports (no wildcard `*` unless same package).
-
-### Types
-- Use `data class` with `val` for immutable data
-- Nullable: `String?` | Non-null: `String`
-- Use interfaces: `List`, `Map`, `Set` (not concrete types)
-- Explicit return types on public functions
-
-### Data Classes
-```kotlin
-data class ApiResponse(
-    val code: Int,
-    val message: String? = null,
-    val payload: Map<String, Any?>? = null,
-)
-```
-
-### Enums
-```kotlin
-enum class ResponseCode(
-    val code: Int,
-    val description: String,
-    val status: HttpStatus
-) {
-    SUCCESS(0, "success", HttpStatus.OK),
-    FAILURE(1000, "something went wrong", HttpStatus.INTERNAL_SERVER_ERROR),
-}
-```
-
-### KDoc
-Use for all public classes, functions, and complex properties:
-```kotlin
-/** Standard API response structure */
-data class ApiResponse(...)
-```
-
-### Error Handling
-- Custom exceptions for domain errors
-- Use `ResponseCode` enum for standardized errors
-- Return appropriate HTTP status codes
-
-### Builder Pattern
-```kotlin
-fun success(message: String = "OK") =
-    builder(ResponseCode.SUCCESS).message(message)
-```
-
-### Dependency Injection
-- Constructor injection (primary)
-- Use `@Service`, `@Repository`, `@Component`
-- Use `@ConfigurationProperties` for config binding
-
-### Testing
-- Test files in `src/test/kotlin` mirroring main structure
-- Use `@SpringBootTest` for integration tests
-- Use `@TestcontainersConfiguration` for Docker-based tests (PostgreSQL, Redis)
-
-```kotlin
-@Import(TestcontainersConfiguration::class)
-@SpringBootTest
-class FilesheepApplicationTests {
-    @Test
-    fun contextLoads() {}
-}
-```
-
----
-
-## 4. Database
-
-- **PostgreSQL** via jOOQ | **Migrations**: Flyway
-- Run `./gradlew jooqCodegen` after schema changes
-- Generated code: `build/generated-src/jooq/main` (do not edit)
-
----
-
-## 5. Dependencies
-
-| Category | Library |
-|----------|---------|
-| Web | Spring Boot Web MVC |
-| Database | jOOQ, PostgreSQL, Flyway |
-| Cache | Spring Cache, Caffeine |
-| Security | Spring Security, JJWT |
-| Redis | Lettuce |
-| Testing | JUnit 5, Testcontainers |
-
----
-
-## 6. Important Notes
-
-- Never commit secrets—use `.env` (already in `.gitignore`)
-- jOOQ generated code must not be manually edited
-- Follow domain model in `README.md`
-- All file operations must enforce authentication and ownership checks
+## Security & Configuration Tips
+- Never trust client-provided identity fields; derive operator identity from a security context.
+- Do not commit secrets; use `.env`/environment variables for DB and token settings.
+- Keep token, refresh-session, and storage internals out of API response DTOs.
