@@ -109,7 +109,7 @@ flyway {
 	url = envOrNull("POSTGRES_URL")
 	user = envOrNull("POSTGRES_USER")
 	password = envOrNull("POSTGRES_PASSWORD")
-	locations = arrayOf("classpath:db/migration")
+	locations = arrayOf("filesystem:src/main/resources/db/migration")
 	cleanDisabled = true
 }
 
