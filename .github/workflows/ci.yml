@@ -28,7 +28,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB }}"
+          --health-cmd "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -48,8 +48,8 @@ jobs:
         run: |
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> "$GITHUB_ENV"
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> "$GITHUB_ENV"
-          echo "POSTGRES_DB=${{ vars.POSTGRES_DB }}" >> "$GITHUB_ENV"
-          echo "POSTGRES_URL=jdbc:postgresql://localhost:5432/${{ vars.POSTGRES_DB }}" >> "$GITHUB_ENV"
+          echo "POSTGRES_DB=${{ vars.POSTGRES_DB || 'fs_database' }}" >> "$GITHUB_ENV"
+          echo "POSTGRES_URL=jdbc:postgresql://localhost:5432/${{ vars.POSTGRES_DB || 'fs_database' }}" >> "$GITHUB_ENV"
 
       - name: Validate and generate jOOQ sources
         run: ./gradlew --no-daemon flywayMigrate jooqCodegen
