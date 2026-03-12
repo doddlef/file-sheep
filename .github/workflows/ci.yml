@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
+    branches: ["main"]
   pull_request:
-    types: [opened]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -21,7 +22,7 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB || 'fs_database' }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
