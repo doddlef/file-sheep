@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Generate jOOQ and Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Export environment for Flyway and jOOQ
+        run: |
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> "$GITHUB_ENV"
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "POSTGRES_DB=${{ vars.POSTGRES_DB }}" >> "$GITHUB_ENV"
+          echo "POSTGRES_URL=jdbc:postgresql://localhost:5432/${{ vars.POSTGRES_DB }}" >> "$GITHUB_ENV"
+
+      - name: Validate and generate jOOQ sources
+        run: ./gradlew --no-daemon flywayMigrate jooqCodegen
+
+      - name: Run tests
+        run: ./gradlew --no-daemon test
